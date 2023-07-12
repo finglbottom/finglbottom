@@ -1,0 +1,66 @@
+import pygame
+
+# Initialize pygame
+pygame.init()
+
+# Set up the display
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Car Parking Game")
+
+# Define colors
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+
+# Car variables
+car_width = 80
+car_height = 160
+car_x = WIDTH // 2 - car_width // 2
+car_y = HEIGHT - car_height - 20
+car_speed = 5
+
+# Level variables
+level = 1
+parking_spaces = [300, 400, 500]  # X positions of the parking spaces
+target_parking_space = 0  # Current parking space the car needs to reach
+
+clock = pygame.time.Clock()
+
+# Game loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Move the car
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and car_x > 0:
+        car_x -= car_speed
+    elif keys[pygame.K_RIGHT] and car_x < WIDTH - car_width:
+        car_x += car_speed
+
+    # Check if the car has reached the target parking space
+    if abs(car_x - parking_spaces[target_parking_space]) < car_width // 2:
+        if target_parking_space == len(parking_spaces) - 1:
+            print("Congratulations! You parked the car successfully!")
+            level += 1
+            car_speed += 1
+        else:
+            target_parking_space += 1
+
+    # Draw the background and parking spaces
+    screen.fill(WHITE)
+    pygame.draw.line(screen, GREEN, (0, HEIGHT - 20), (WIDTH, HEIGHT - 20), 2)
+    for space in parking_spaces:
+        pygame.draw.rect(screen, RED, (space - car_width // 2, HEIGHT - 40, car_width, 20))
+
+    # Draw the car
+    pygame.draw.rect(screen, GREEN, (car_x, car_y, car_width, car_height))
+
+    pygame.display.flip()
+    clock.tick(60)
+
+# Quit the game
+pygame.quit()
